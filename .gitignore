@@ -62,3 +62,7 @@ typings/
 
 # Mac Files
 .DS_Store
+
+# React Native Stuff
+ios/build
+ios/Pods
