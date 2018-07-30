@@ -11,11 +11,14 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'
 
 import { createStore, applyMiddleware } from 'redux';
 import { Provider, connect } from 'react-redux';
-import { createStackNavigator, createTabNavigator } from 'react-navigation';
+import { createStackNavigator, createMaterialTopTabNavigator } from 'react-navigation';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
 
 import reducer from './reducer';
+import init from './utils/StylesheetBuild';
+
+init()
 
 import Header from './components/Header'
 import CastleList from './components/CastleList'
@@ -30,7 +33,7 @@ const client = axios.create({
 
 const store = createStore(reducer, applyMiddleware(axiosMiddleware(client)));
 
-const Tabs = createTabNavigator({
+const Tabs = createMaterialTopTabNavigator({
   Settings: {
     screen: Start
   },
@@ -56,7 +59,7 @@ const Stack = createStackNavigator({
   initialRouteName: 'CastleList',
   navigationOptions: {
     headerStyle: {
-      backgroundColor: '#92B4CB',
+      backgroundColor: '#2980b9',
       borderColor: 'transparent',
       borderBottomWidth: 0,
       shadowColor: 'transparent',
@@ -70,8 +73,7 @@ const Stack = createStackNavigator({
     headerTitleStyle: {
       fontWeight: 'bold'
     },
-    headerRight: <Text>Search</Text>,
-    headerBackTitle: null,
+    header: (props) => <Header {...props} />
   }
 })
 
@@ -82,9 +84,7 @@ export default class App extends Component<Props> {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          <View style={styles.content}>
-            <Stack />
-          </View>
+          <Stack />
         </View>
       </Provider>
     );
@@ -94,15 +94,9 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#28272d',
   },
   content: {
-    flex: 1,
-    backgroundColor: 'green'
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    flex: 1
   }
 })

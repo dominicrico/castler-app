@@ -5,12 +5,12 @@ export const GET_CASTLE_INFO = 'castler/castles/INFO';
 export const GET_CASTLE_INFO_SUCCESS = 'castler/castles/INFO_SUCCESS';
 export const GET_CASTLE_INFO_FAIL = 'castler/castles/INFO_FAIL';
 
-export default function reducer(state = { castles: [] }, action) {
+export default function reducer(state = { castles: [], page: 1, pages: 1 }, action) {
   switch (action.type) {
     case GET_CASTLES:
       return { ...state, loading: true }
     case GET_CASTLES_SUCCESS:
-      return { ...state, loading: false, castles: action.payload.data.docs }
+      return { ...state, loading: false, castles: action.payload.data.docs, page: action.payload.data.page, pages: action.payload.data.pages}
     case GET_CASTLES_FAIL:
       return {
         ...state,
@@ -20,7 +20,7 @@ export default function reducer(state = { castles: [] }, action) {
     case GET_CASTLE_INFO:
       return { ...state, loading: true }
     case GET_CASTLE_INFO_SUCCESS:
-      return { ...state, loading: false, castleInfo: action.payload.data }
+      return { ...state, loading: false, castle: action.payload.data }
     case GET_CASTLE_INFO_FAIL:
       return {
         ...state,
@@ -32,12 +32,12 @@ export default function reducer(state = { castles: [] }, action) {
   }
 }
 
-export function listCastles() {
+export function listCastles(page = 1) {
   return {
     type: GET_CASTLES,
     payload: {
       request: {
-        url: `/castles/all`
+        url: `/castles/all?page=${page}`
       }
     }
   }
