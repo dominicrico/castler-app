@@ -12,6 +12,7 @@
     "react-native": "0.56.0",
     "react-native-admob": "^2.0.0-beta.5",
     "react-native-extended-stylesheet": "^0.8.1",
+    "react-native-sideswipe": "^1.4.2",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.9.1",
     "react-redux": "^5.0.7",

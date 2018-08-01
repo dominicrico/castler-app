@@ -7,7 +7,9 @@
  */
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'
+import {SafeAreaView, StatusBar, Platform, View} from 'react-native'
+import EStyleSheet from 'react-native-extended-stylesheet'
+
 
 import { createStore, applyMiddleware } from 'redux';
 import { Provider, connect } from 'react-redux';
@@ -24,10 +26,9 @@ import Header from './components/Header'
 import CastleList from './components/CastleList'
 import Start from './components/Start'
 import CastleDetail from './components/CastleDetail';
-// import Profile from './components/CastleList';
 
 const client = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'https://api.castler.app',
   responseType: 'json'
 });
 
@@ -59,7 +60,7 @@ const Stack = createStackNavigator({
   initialRouteName: 'CastleList',
   navigationOptions: {
     headerStyle: {
-      backgroundColor: '#2980b9',
+      backgroundColor: EStyleSheet.value('$primaryColor'),
       borderColor: 'transparent',
       borderBottomWidth: 0,
       shadowColor: 'transparent',
@@ -77,26 +78,33 @@ const Stack = createStackNavigator({
   }
 })
 
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
+
 type Props = {}
 
 export default class App extends Component<Props> {
   render() {
     return (
       <Provider store={store}>
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <Stack />
-        </View>
+        </SafeAreaView>
       </Provider>
     );
   }
 }
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#28272d',
+    backgroundColor: '$primaryColor',
+    height: '100%'
   },
   content: {
     flex: 1
+  },
+  statusBar: {
+    height: STATUSBAR_HEIGHT,
+    backgroundColor: "#4AA4C2"
   }
 })

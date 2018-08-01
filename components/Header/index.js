@@ -7,21 +7,29 @@
  */
 
 import React, {Component} from 'react'
-import {Text, View, TouchableOpacity} from 'react-native'
+import {Text, View, TouchableOpacity, TextInput} from 'react-native'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import Icon from 'react-native-vector-icons/Feather'
+import _ from 'lodash'
+import { connect } from 'react-redux'
+
+import { findCastles, listCastles } from '../../reducer'
 
 type Props = {}
 
-export default class Header extends Component<Props> {
+class Header extends Component<Props> {
   constructor(props) {
     super()
 
-    console.log('props', props)
+    this.onChangeTextDelayed = _.debounce(this.onChangeText, 800);
 
     this.state = {
-      label: null
+      label: null,
+      search: false,
+      term: null
     }
+
+    this.searchInput = null
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -36,6 +44,34 @@ export default class Header extends Component<Props> {
     }
 
     return (changed) ? state : null
+  }
+
+  onChangeText = (text) => {
+    if (this.props.index > 0) this.props.navigation.popToTop()
+    if (text && text.length) this.props.findCastles(text)
+    else this.props.listCastles(1)
+  }
+
+  onHideSearch = () => {
+    if (this.searchInput) {
+      this.searchInput.blur()
+      this.searchInput.clear()
+      this.searchInput = null
+    }
+    this.setState({search: !this.state.search})
+    this.props.listCastles(1)
+  }
+
+  showSearch = () => {
+    if (this.searchInput) this.searchInput.focus()
+    this.setState({search: !this.state.search})
+  }
+
+  setRef = element => {
+    if (element && !this.searchInput) {
+      this.searchInput = element;
+      element.focus()
+    }
   }
 
   goBack = () => this.props.navigation.pop()
@@ -55,12 +91,30 @@ export default class Header extends Component<Props> {
           )}
         </View>
         <View style={[styles.column, styles.columnMiddle]}>
-          <Text style={styles.headerTitle}>{this.state.label}</Text>
+          {this.state.search ? (
+            <TextInput
+              ref={this.setRef}
+              style={styles.search}
+              onChangeText={this.onChangeTextDelayed}
+              value={this.state.text}
+              placeholder="Type to search..."
+              placeholderColor="#AFC6CD"
+              selectionColor="#fff"
+            />
+          ) : (
+            <Text style={styles.headerTitle}>{this.state.label}</Text>
+          )}
         </View>
         <View style={[styles.column, styles.columnRight]}>
-          <TouchableOpacity style={styles.headerRight}>
-            <Icon name="search" size={20} color="#fff" />
-          </TouchableOpacity>
+          {this.state.search ? (
+            <TouchableOpacity style={styles.headerRight} onPress={() => this.onHideSearch()}>
+              <Icon name="x" size={20} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.headerRight} onPress={() => this.showSearch()}>
+              <Icon name="search" size={20} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     )
@@ -75,32 +129,46 @@ const styles = EStyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    paddingHorizontal: 20
+    paddingHorizontal: 12
   },
   headerTitle: {
-    color: '#fff'
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16
   },
   column: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'flex-start'
   },
   columnMiddle: {
+    flex: 3,
     justifyContent: 'center',
     alignItems: 'center'
   },
   headerRight: {
-    paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center'
+    paddingHorizontal: 2,
+    alignItems: 'flex-end'
   },
   columnRight: {
-    justifyContent: 'center',
     alignItems: 'flex-end'
   },
   headerLeft: {
-    paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center'
+    paddingHorizontal: 2,
+    alignItems: 'flex-start'
+  },
+  search: {
+    height: 20,
+    width: '100%',
+    borderColor: 'transparent',
+    borderBottomColor: 'white',
+    borderWidth: 2,
+    color: 'white'
   }
 })
+
+const mapDispatchToProps = {
+  findCastles,
+  listCastles,
+}
+
+export default connect(null, mapDispatchToProps)(Header)

@@ -14,7 +14,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/Feather';
 
-import { listCastles } from '../../reducer'
+import { listCastles, findCastles } from '../../reducer'
 
 const width = Dimensions.get('window').width
 let _data = []
@@ -25,11 +25,10 @@ class CastleList extends Component<Props> {
   constructor(props) {
     super()
 
-    const castles = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
-
     this.state = {
-      castles: castles.cloneWithRows(['row 1', 'row 2']),
-      page: 1
+      castles: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+      page: 1,
+      totalPages: 0
     }
   }
 
@@ -39,10 +38,16 @@ class CastleList extends Component<Props> {
   };
 
   static getDerivedStateFromProps(props, state) {
-    const { castles, page, pages, loading } = props
+    const { castles, results, page, pages, loading } = props
 
-    _data = _data.concat(castles)
+    if (page === 1) {
+      _data = castles
+    } else if (page > 1) {
+      _data = _data.concat(castles)
+    }
 
+    state.page = page
+    state.totalPages = pages
     state.loading = loading
     state.castles = state.castles.cloneWithRows(_data)
 
@@ -53,12 +58,14 @@ class CastleList extends Component<Props> {
     this.props.listCastles(1)
   }
 
-  _rowHasChanged = (prevRow, nextRow) => {
-    return prevRow !== nextRow
-  }
-
   getNextCastles = () => {
-    this.props.listCastles(this.props.page + 1)
+    if (this.state.page < this.state.totalPages) {
+      if (this.props.term) {
+        this.props.findCastles(this.props.term, this.state.page + 1)
+      } else {
+        this.props.listCastles(this.state.page + 1)
+      }
+    }
   }
 
   renderItem = (item) => {
@@ -72,7 +79,10 @@ class CastleList extends Component<Props> {
         >
           {(item.images[0]) ?
             <Image resizeMode="cover" source={{uri: 'http://localhost:8080/castles/image/' + item.images[0]._id}} style={{ width: width / 2, height: width / 2 }} />
-            : null
+            : (<View style={styles.no_image}>
+              <Image resizeMode="contain" source={require('../../assets/castler-icon.png')} style={{ alignSelf: 'center', opacity: 0.6, marginTop: 'auto', marginBottom: 'auto', width: width / 4, height: width / 4 }} />
+              <Text style={styles.no_image_text}>No Image</Text>
+            </View>)
           }
           <View style={styles.card_footer}>
             <View style={styles.footer_left}>
@@ -92,7 +102,7 @@ class CastleList extends Component<Props> {
     return (
       <View style={styles.outerContainer}>
         <View style={styles.listHeader}>
-          <Text style={styles.hint}>{`Select to view\nfull details`}</Text>
+          <Text style={styles.hint}>{(this.props.term) ? `Found ${this.props.total} Castles\nfor "${this.props.term}"` : `Select to view\nfull details`}</Text>
         </View>
         <View style={styles.overlapping} />
         <View style={styles.container}>
@@ -118,7 +128,18 @@ class CastleList extends Component<Props> {
 
 const styles = EStyleSheet.create({
   outerContainer: {
-    backgroundColor: '#28272d'
+    flex: 1,
+    backgroundColor: '$backgroundColor'
+  },
+  no_image: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  no_image_text: {
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    color: '#555A5C'
   },
   container: {
     flexDirection: 'row',
@@ -138,7 +159,7 @@ const styles = EStyleSheet.create({
     top: 50,
     width: '100%',
     height: 80,
-    backgroundColor: '#2980b9'
+    backgroundColor: '$primaryColor'
   },
   footer_left: {
     flex: 2,
@@ -168,7 +189,7 @@ const styles = EStyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     borderRadius: 4,
-    backgroundColor: 'red',
+    backgroundColor: '#eee',
     overflow: 'hidden',
     display: 'flex'
   },
@@ -196,7 +217,7 @@ const styles = EStyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2980b9'
+    backgroundColor: '$primaryColor'
   },
   hint: {
     textAlign: 'center',
@@ -206,15 +227,18 @@ const styles = EStyleSheet.create({
 
 const mapStateToProps = state => {
   return {
+    term: state.term,
     castles: state.castles,
     page: parseInt(state.page),
     pages: state.pages,
+    total: state.total,
     loading: state.loading
   }
 }
 
 const mapDispatchToProps = {
-  listCastles
+  listCastles,
+  findCastles
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CastleList)
