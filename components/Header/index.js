@@ -34,6 +34,7 @@ class Header extends Component<Props> {
 
   static getDerivedStateFromProps(props, state) {
     const { descriptors } = props
+    console.log(descriptors)
     const keys = Object.keys(descriptors)
     const title = descriptors[keys[props.index || 0]].options.title || 'Castler'
     let changed = false
@@ -82,11 +83,11 @@ class Header extends Component<Props> {
         <View style={styles.column}>
           {this.props.index > 0 ? (
             <TouchableOpacity style={styles.headerLeft} onPress={() => this.goBack()}>
-              <Icon name="chevron-left" size={20} color="#fff" />
+              <Icon name="chevron-left" size={22} color="#fff" />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.headerLeft}>
-              <Icon name="menu" size={20} color="#fff" />
+              <Icon name="menu" size={22} color="#fff" />
             </TouchableOpacity>
           )}
         </View>
@@ -108,11 +109,11 @@ class Header extends Component<Props> {
         <View style={[styles.column, styles.columnRight]}>
           {this.state.search ? (
             <TouchableOpacity style={styles.headerRight} onPress={() => this.onHideSearch()}>
-              <Icon name="x" size={20} color="#fff" />
+              <Icon name="x" size={22} color="#fff" />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.headerRight} onPress={() => this.showSearch()}>
-              <Icon name="search" size={20} color="#fff" />
+              <Icon name="search" size={22} color="#fff" />
             </TouchableOpacity>
           )}
         </View>
@@ -133,8 +134,9 @@ const styles = EStyleSheet.create({
   },
   headerTitle: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16
+    top: 3,
+    fontSize: 18,
+    fontFamily: 'Biko-Black'
   },
   column: {
     flex: 1,
@@ -162,7 +164,8 @@ const styles = EStyleSheet.create({
     borderColor: 'transparent',
     borderBottomColor: 'white',
     borderWidth: 2,
-    color: 'white'
+    color: 'white',
+    fontFamily: 'Biko'
   }
 })
 

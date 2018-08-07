@@ -32,11 +32,6 @@ class CastleList extends Component<Props> {
     }
   }
 
-
-  static navigationOptions = {
-    title: 'Castles'
-  };
-
   static getDerivedStateFromProps(props, state) {
     const { castles, results, page, pages, loading } = props
 
@@ -78,7 +73,7 @@ class CastleList extends Component<Props> {
           }}
         >
           {(item.images[0]) ?
-            <Image resizeMode="cover" source={{uri: 'http://localhost:8080/castles/image/' + item.images[0]._id}} style={{ width: width / 2, height: width / 2 }} />
+            <Image resizeMode="cover" source={{uri: 'https://api.castler.app/castles/image/' + item.images[0]._id}} style={{ width: width / 2.15, height: width / 1.85 }} />
             : (<View style={styles.no_image}>
               <Image resizeMode="contain" source={require('../../assets/castler-icon.png')} style={{ alignSelf: 'center', opacity: 0.6, marginTop: 'auto', marginBottom: 'auto', width: width / 4, height: width / 4 }} />
               <Text style={styles.no_image_text}>No Image</Text>
@@ -102,7 +97,7 @@ class CastleList extends Component<Props> {
     return (
       <View style={styles.outerContainer}>
         <View style={styles.listHeader}>
-          <Text style={styles.hint}>{(this.props.term) ? `Found ${this.props.total} Castles\nfor "${this.props.term}"` : `Select to view\nfull details`}</Text>
+          <Text style={styles.hint}>{(this.props.term) ? `Found ${this.props.total} Castles\nfor "${this.props.term}"` : `Select a castle\nto view full details`}</Text>
         </View>
         <View style={styles.overlapping} />
         <View style={styles.container}>
@@ -138,8 +133,8 @@ const styles = EStyleSheet.create({
   },
   no_image_text: {
     textTransform: 'uppercase',
-    fontWeight: 'bold',
-    color: '#555A5C'
+    color: '#555A5C',
+    fontFamily: 'Biko-Bold',
   },
   container: {
     flexDirection: 'row',
@@ -148,7 +143,8 @@ const styles = EStyleSheet.create({
   },
   listContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    justifyContent: 'center'
   },
   listFooter: {
     justifyContent: 'center',
@@ -185,8 +181,9 @@ const styles = EStyleSheet.create({
   },
   item: {
     flex: 1,
-    height: (width / 2) + 25 ,
-    marginLeft: 10,
+    height: (width / 2) + 35 ,
+    width: (width / 2) - 30,
+    marginLeft: 12,
     marginTop: 10,
     borderRadius: 4,
     backgroundColor: '#eee',
@@ -206,12 +203,12 @@ const styles = EStyleSheet.create({
   },
   text_white: {
     color: '#fff',
-    fontWeight: 'bold'
+    fontFamily: 'Biko-Bold'
   },
   text_grey: {
     color: '#555A5C',
-    fontWeight: 'bold',
-    fontSize: 12
+    fontSize: 12,
+    fontFamily: 'Biko'
   },
   listHeader: {
     height: 50,
@@ -221,7 +218,8 @@ const styles = EStyleSheet.create({
   },
   hint: {
     textAlign: 'center',
-    color: '#fff'
+    color: '#fff',
+    fontFamily: 'Biko',
   }
 })
 

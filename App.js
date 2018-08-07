@@ -47,7 +47,7 @@ const Stack = createStackNavigator({
   Home: {
     screen: Tabs,
     navigationOptions: {
-      title: 'Castler'
+      title: 'CASTLER'
     }
   },
   Detail: {
